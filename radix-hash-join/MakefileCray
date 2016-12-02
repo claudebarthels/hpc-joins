@@ -1,0 +1,93 @@
+
+########################################
+
+SOURCE_FILES		= 	src/hpcjoin/main.cpp \
+						src/hpcjoin/utils/Thread.cpp \
+						src/hpcjoin/data/Relation.cpp \
+						src/hpcjoin/data/Window.cpp \
+						src/hpcjoin/histograms/LocalHistogram.cpp \
+						src/hpcjoin/histograms/GlobalHistogram.cpp \
+						src/hpcjoin/histograms/AssignmentMap.cpp \
+						src/hpcjoin/histograms/OffsetMap.cpp \
+						src/hpcjoin/memory/Pool.cpp \
+						src/hpcjoin/operators/HashJoin.cpp \
+						src/hpcjoin/performance/Measurements.cpp \
+						src/hpcjoin/tasks/HistogramComputation.cpp \
+						src/hpcjoin/tasks/NetworkPartitioning.cpp \
+						src/hpcjoin/tasks/LocalPartitioning.cpp \
+						src/hpcjoin/tasks/BuildProbe.cpp
+
+HEADER_FILES		= 	src/hpcjoin/utils/Debug.h \
+						src/hpcjoin/utils/Thread.h \
+						src/hpcjoin/core/Configuration.h \
+						src/hpcjoin/data/CompressedTuple.h \
+						src/hpcjoin/data/Tuple.h \
+						src/hpcjoin/data/Relation.h \
+						src/hpcjoin/data/Window.h \
+						src/hpcjoin/histograms/LocalHistogram.h \
+						src/hpcjoin/histograms/GlobalHistogram.h \
+						src/hpcjoin/histograms/AssignmentMap.h \
+						src/hpcjoin/histograms/OffsetMap.h \
+						src/hpcjoin/memory/Pool.h \
+						src/hpcjoin/operators/HashJoin.h \
+						src/hpcjoin/performance/Measurements.h \
+						src/hpcjoin/tasks/Task.h \
+						src/hpcjoin/tasks/HistogramComputation.h \
+						src/hpcjoin/tasks/NetworkPartitioning.h \
+						src/hpcjoin/tasks/LocalPartitioning.h \
+						src/hpcjoin/tasks/BuildProbe.h
+						
+########################################
+
+PROJECT_NAME		= cahj-bin
+
+########################################
+
+SOURCE_FOLDER		= src
+BUILD_FOLER			= build
+RELEASE_FOLDER		= release
+
+########################################
+			
+OBJECT_FILES		= $(patsubst $(SOURCE_FOLDER)/%.cpp,$(BUILD_FOLER)/%.o,$(SOURCE_FILES))
+SOURCE_DIRECTORIES	= $(dir $(HEADER_FILES))
+BUILD_DIRECTORIES	= $(patsubst $(SOURCE_FOLDER)/%,$(BUILD_FOLER)/%,$(SOURCE_DIRECTORIES))
+
+########################################
+
+COMPILER_FLAGS 		= -O3 -std=c++0x -mavx -lpthread -lpapi -D USE_FOMPI -D MEASUREMENT_DETAILS_HISTOGRAM -D MEASUREMENT_DETAILS_NETWORK -D MEASUREMENT_DETAILS_LOCALPART -D MEASUREMENT_DETAILS_LOCALBP
+
+########################################
+
+FOMPI_LOCATION		= $(SCRATCH)/libs/foMPI-0.2.1/
+FOMPI_LIBS			= -L $(FOMPI_LOCATION)/mpitypes/install/lib -lmpitypes -L /opt/cray/dmapp/7.0.1-1.0501.8315.8.4.ari/lib64 -ldmapp -L $(FOMPI_LOCATION)/libtopodisc -ltopodisc
+FOMPI_INC			= -I $(FOMPI_LOCATION)/mpitypes/install/include -I $(FOMPI_LOCATION)/libtopodisc -I /opt/cray/dmapp/7.0.1-1.0501.8315.8.4.ari/include
+FOMPI_OPTS			= -DXPMEM
+FOMPI_FLAGS			= $(FOMPI_OPTS) $(FOMPI_INC)
+
+PAPI_FOLDER			= /scratch/daint/claudeb/libs/papi-5.4.3/src/
+
+########################################
+
+all: program
+
+########################################
+
+$(BUILD_FOLER)/%.o:  $(SOURCE_FILES) $(HEADER_FILES)
+	mkdir -p $(BUILD_FOLER)
+	mkdir -p $(BUILD_DIRECTORIES)
+	CC $(COMPILER_FLAGS) $(FOMPI_FLAGS) -c $(SOURCE_FOLDER)/$*.cpp -I $(SOURCE_FOLDER) -I $(FOMPI_LOCATION) -I $(PAPI_FOLDER) -o $(BUILD_FOLER)/$*.o
+
+########################################
+
+program: $(OBJECT_FILES)
+	mkdir -p $(RELEASE_FOLDER)
+	CC $(OBJECT_FILES) $(FOMPI_LOCATION)/fompi.ar $(COMPILER_FLAGS) $(FOMPI_FLAGS) $(FOMPI_LIBS) -I $(FOMPI_LOCATION) -I $(PAPI_FOLDER) -L $(PAPI_FOLDER) -o $(RELEASE_FOLDER)/$(PROJECT_NAME)
+	
+
+########################################
+
+clean:
+	rm -rf $(BUILD_FOLER)
+	rm -rf $(RELEASE_FOLDER)
+	
