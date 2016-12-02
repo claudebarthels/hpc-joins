@@ -4,8 +4,12 @@ HPC-Joins consists of two join implementations: A distributed radix hash join an
 
 ## Installation
 
-Each algorithm comes with two Makefiles. The first one can be used on regular x86 machines. It compiles the join implementation and links it to the default MPI implementation that is available on your system. The second Makefile (called ''MakefileCray'') is intended to be used on Cray Supercomputers where foMPI is available. foMPI is a MPI RMA library that, for intra-node communication, uses ''XPMEM'', a Linux kernel module that enables mapping memory of one process into the virtual address space of another, and, for inter-node communication, uses ''DMAPP'', a low-level networking interface of the Aries network. For performance reasons, it is highly recommended to use foMPI over the default MPI implementation.
+Each algorithm comes with two Makefiles. The first one can be used on regular x86 machines. It compiles the join implementation and links it to the default MPI implementation that is available on your system. The second Makefile,called ''MakefileCray'', is intended to be used on Cray Supercomputers where foMPI is available. foMPI is a MPI RMA library that, for intra-node communication, uses XPMEM, a Linux kernel module that enables mapping memory of one process into the virtual address space of another, and, for inter-node communication, uses DMAPP, a low-level networking interface of the Aries network. For performance reasons, it is highly recommended to use foMPI over the default MPI implementation. Detailed step-by-step instructions can be found in the ''INSTRUCTIONS.txt'' file.
 
+```sh
+$ make all # Builds the program
+$ make clean # Removes the build and output folders
+```
 ## Citing HPC-Joins in Academic Publications
 
 These join algorithms have been created in the context of my work on parallel and distributed join algorithms. Detailed project descriptions can be found in two papers published at ACM SIGMOD 2015 and VLDB 2017. Further publications concerning the use of MPI and RDMA have been submitted to several leading systems conferences and are currently under review. Therefore, for the time being, please refer to the publications listed below when referring to this library.
