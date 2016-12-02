@@ -4,7 +4,7 @@ HPC-Joins consists of two join implementations: A distributed radix hash join an
 
 ## Installation
 
-Each algorithm comes with two Makefiles. The first one can be used on regular x86 machines. It compiles the join implementation and links it to the default MPI implementation that is available on your system. The second Makefile,called ''MakefileCray'', is intended to be used on Cray Supercomputers where foMPI is available. foMPI is a MPI RMA library that, for intra-node communication, uses XPMEM, a Linux kernel module that enables mapping memory of one process into the virtual address space of another, and, for inter-node communication, uses DMAPP, a low-level networking interface of the Aries network. For performance reasons, it is highly recommended to use foMPI over the default MPI implementation. Detailed step-by-step instructions can be found in the ''INSTRUCTIONS.txt'' file.
+Each algorithm comes with two Makefiles. The first one can be used on regular x86 machines. It compiles the join implementation and links it to the default MPI implementation that is available on your system. The second Makefile, called ''MakefileCray'', is intended to be used on Cray Supercomputers where foMPI is available. foMPI is a scalable MPI RMA library that, for intra-node communication, uses XPMEM, a Linux kernel module that enables mapping memory of one process into the virtual address space of another, and, for inter-node communication, uses DMAPP, a low-level networking interface of the Aries network. For performance reasons, it is highly recommended to use foMPI over the default MPI implementation. Detailed step-by-step instructions can be found in the ''INSTRUCTIONS.txt'' file.
 
 ```sh
 $ make all # Builds the program
